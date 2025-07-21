@@ -1,6 +1,7 @@
 #define DUCKDB_EXTENSION_MAIN
 
 #include "mobilityduck_extension.hpp"
+#include "types.hpp"
 #include "duckdb.hpp"
 #include "duckdb/common/exception.hpp"
 #include "duckdb/common/string_util.hpp"
@@ -37,6 +38,10 @@ static void LoadInternal(DatabaseInstance &instance) {
 	auto mobilityduck_openssl_version_scalar_function = ScalarFunction("mobilityduck_openssl_version", {LogicalType::VARCHAR},
 	                                                            LogicalType::VARCHAR, MobilityduckOpenSSLVersionScalarFun);
 	ExtensionUtil::RegisterFunction(instance, mobilityduck_openssl_version_scalar_function);
+
+	// Register geometry types
+	GeoTypes::RegisterScalarFunctions(instance);
+	GeoTypes::RegisterTypes(instance);
 }
 
 void MobilityduckExtension::Load(DuckDB &db) {
@@ -47,8 +52,8 @@ std::string MobilityduckExtension::Name() {
 }
 
 std::string MobilityduckExtension::Version() const {
-#ifdef EXT_VERSION_QUACK
-	return EXT_VERSION_QUACK;
+#ifdef EXT_VERSION_MOBILITYDUCK
+	return EXT_VERSION_MOBILITYDUCK;
 #else
 	return "";
 #endif
